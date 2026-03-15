@@ -9,10 +9,17 @@ public class Meta : MonoBehaviour
 
     private bool activado = false;
 
-    private void Start()
+    private void Awake()
     {
         if (panelVictoria != null)
             panelVictoria.SetActive(false);
+
+        if (audioVictoria != null)
+        {
+            audioVictoria.playOnAwake = false;
+            audioVictoria.loop = false;
+            audioVictoria.Stop();
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -22,6 +29,9 @@ public class Meta : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             activado = true;
+
+            if (GameManager.Instance != null)
+                GameManager.Instance.FinalizarNivel();
 
             if (panelVictoria != null)
                 panelVictoria.SetActive(true);
@@ -38,6 +48,7 @@ public class Meta : MonoBehaviour
         if (audioVictoria != null)
         {
             audioVictoria.ignoreListenerPause = true;
+            audioVictoria.Stop();
             audioVictoria.Play();
             yield return new WaitForSecondsRealtime(0.1f);
         }
