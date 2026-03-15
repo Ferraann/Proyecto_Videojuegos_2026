@@ -301,6 +301,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 864783975}
     m_Modifications:
+    - target: {fileID: 1516444853842729103, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+      propertyPath: menuPrincipal
+      value: MenuInicial
+      objectReference: {fileID: 0}
+    - target: {fileID: 4213299272519290997, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+      propertyPath: menuPrincipal
+      value: MenuInicial
+      objectReference: {fileID: 0}
     - target: {fileID: 4584671022412831228, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
       propertyPath: m_Type
       value: 0
@@ -312,6 +320,34 @@ PrefabInstance:
     - target: {fileID: 4717681289542803407, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
       propertyPath: m_Color.a
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264952898997728750, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264952898997728750, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264952898997728750, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1516444853842729103, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+    - target: {fileID: 5264952898997728750, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264952898997728750, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: MenuPrincipal
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264952898997728750, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: VictoryMenu, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264952898997728750, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 7640960557291954921, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
       propertyPath: m_Pivot.x
