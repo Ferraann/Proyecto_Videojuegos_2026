@@ -1,61 +1,95 @@
+using System.Collections; // Necesario para los tiempos de espera
 using UnityEngine;
-using System.Collections;
 
 public class Meta : MonoBehaviour
 {
-    public GameObject panelVictoria;
-    public MonoBehaviour movimientoJugador;
-    public AudioSource audioVictoria;
+    [Header("Textos e Interfaz")]
+    public GameObject mensajeUI;
+    public GameObject textoSobrePuerta;
 
-    private bool activado = false;
+    [Header("Animación de la Puerta")]
+    public Animator animatorPuerta; // Arrastra aquí el objeto que tiene el Animator
+    public string nombreAnimacion = "AbrirPuerta"; // El nombre exacto del estado en el Animator
+    public float tiempoDeEspera = 2f; // Segundos que dura tu animación antes de mostrar la victoria
 
-    private void Awake()
+    private bool jugadorCerca = false;
+    private bool metaAlcanzada = false; // Para evitar que se pulse la E varias veces
+
+    void Start()
     {
-        if (panelVictoria != null)
-            panelVictoria.SetActive(false);
+        if (mensajeUI != null) mensajeUI.SetActive(false);
+        if (textoSobrePuerta != null) textoSobrePuerta.SetActive(false);
+    }
 
-        if (audioVictoria != null)
+    void Update()
+    {
+        // Solo funciona si el jugador está cerca, pulsa E, y AÚN NO ha llegado a la meta
+        if (jugadorCerca && !metaAlcanzada && Input.GetKeyDown(KeyCode.E))
         {
-            audioVictoria.playOnAwake = false;
-            audioVictoria.loop = false;
-            audioVictoria.Stop();
+            StartCoroutine(RutinaMeta());
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (activado) return;
-
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !metaAlcanzada)
         {
-            activado = true;
-
-            if (GameManager.Instance != null)
-                GameManager.Instance.FinalizarNivel();
-
-            if (panelVictoria != null)
-                panelVictoria.SetActive(true);
-
-            if (movimientoJugador != null)
-                movimientoJugador.enabled = false;
-
-            StartCoroutine(ReproducirVictoria());
+            jugadorCerca = true;
+            if (mensajeUI != null) mensajeUI.SetActive(true);
+            if (textoSobrePuerta != null) textoSobrePuerta.SetActive(true);
         }
     }
 
-    private IEnumerator ReproducirVictoria()
+    private void OnTriggerExit(Collider other)
     {
-        if (audioVictoria != null)
+        if (other.CompareTag("Player") && !metaAlcanzada)
         {
-            audioVictoria.ignoreListenerPause = true;
-            audioVictoria.Stop();
-            audioVictoria.Play();
-            yield return new WaitForSecondsRealtime(0.1f);
+            jugadorCerca = false;
+            if (mensajeUI != null) mensajeUI.SetActive(false);
+            if (textoSobrePuerta != null) textoSobrePuerta.SetActive(false);
+        }
+    }
+
+    // Esta es la Corrutina que controla los tiempos
+    private IEnumerator RutinaMeta()
+    {
+        metaAlcanzada = true; // Bloqueamos la puerta para que no se active de nuevo
+
+        // 1. Ocultamos los textos de "Pulsa E"
+        if (mensajeUI != null) mensajeUI.SetActive(false);
+        if (textoSobrePuerta != null) textoSobrePuerta.SetActive(false);
+
+        // 2. Reproducimos la animación
+        if (animatorPuerta != null)
+        {
+            animatorPuerta.Play(nombreAnimacion);
+        }
+        else
+        {
+            Debug.LogWarning("Falta asignar el Animator de la puerta en el inspector.");
         }
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        // 3. Esperamos a que la animación termine
+        yield return new WaitForSeconds(tiempoDeEspera);
 
-        Time.timeScale = 0f;
+        // 4. Mostramos el mensaje de meta final
+        Debug.Log("¡Has llegado a la meta!");
+
+        // =====================================================================
+        // AQUÍ PUEDES AÑADIR EL CÓDIGO PARA MOSTRAR LA PANTALLA DE VICTORIA
+        // =====================================================================
+
+        // Ejemplo de cómo sería (descomenta borrando las "//" cuando tengas tu pantalla):
+
+        // if (pantallaVictoriaUI != null)
+        // {
+        //     pantallaVictoriaUI.SetActive(true); // Activa el Canvas de victoria
+        // }
+        // 
+        // Cursor.lockState = CursorLockMode.None; // Muestra el ratón si lo tenías oculto
+        // Cursor.visible = true;
+        // Time.timeScale = 0f; // Pausa el juego (opcional)
+
+        // =====================================================================
     }
 }
