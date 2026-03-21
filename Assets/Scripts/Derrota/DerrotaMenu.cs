@@ -1,14 +1,16 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class VictoryMenu : MonoBehaviour
+public class DerrotaMenu : MonoBehaviour
 {
-    public string siguienteNivel = "Nivel_Prototipo";
+    public AudioSource sonidoDerrota;
 
-    public void SiguienteNivel()
+    void OnEnable()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(siguienteNivel);
+        if (sonidoDerrota != null)
+        {
+            sonidoDerrota.Play();
+        }
     }
 
     public void ReiniciarNivel()
