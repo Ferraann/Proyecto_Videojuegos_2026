@@ -12,6 +12,7 @@ namespace Possession
 
         private InputHandler       inputHandler;
         private PossessionState    currentState       = PossessionState.Free;
+        public  PossessionState    CurrentState       => currentState;
         private IPossessable       currentTarget;
         private List<IPossessable> nearbyPossessables = new List<IPossessable>();
         private float              scanRefreshTimer;
@@ -38,8 +39,11 @@ namespace Possession
             scanRefreshTimer += Time.deltaTime;
             if (scanRefreshTimer >= 0.1f)
             {
-                scanRefreshTimer   = 0f;
-                nearbyPossessables = FindAllNearby();
+                scanRefreshTimer = 0f;
+                List<IPossessable> newNearby = FindAllNearby();
+
+                bool listChanged = newNearby.Count != nearbyPossessables.Count;
+                nearbyPossessables = newNearby;
 
                 if (nearbyPossessables.Count == 0)
                 {
@@ -47,15 +51,23 @@ namespace Possession
                     currentTarget = null;
                     return;
                 }
+
+                if (listChanged)
+                {
+                    IPossessable nearest = FindNearestFrom(nearbyPossessables);
+                    currentTarget = nearest;
+                    outlineController.ShowOutlines(nearbyPossessables, currentTarget);
+                    return;
+                }
             }
 
             if (nearbyPossessables.Count == 0) return;
 
-            IPossessable nearest = FindNearestFrom(nearbyPossessables);
+            IPossessable newNearest = FindNearestFrom(nearbyPossessables);
 
-            if (nearest == null || nearest == currentTarget) return;
+            if (newNearest == null || newNearest == currentTarget) return;
 
-            currentTarget = nearest;
+            currentTarget = newNearest;
             outlineController.ShowOutlines(nearbyPossessables, currentTarget);
 
             Debug.Log($"[Possession] Nuevo objetivo más cercano: {((MonoBehaviour)currentTarget).gameObject.name}");
@@ -96,19 +108,13 @@ namespace Possession
         private void EnterScanning()
         {
             nearbyPossessables = FindAllNearby();
+            currentTarget      = FindNearestFrom(nearbyPossessables);
+            currentState       = PossessionState.Scanning;
 
-            if (nearbyPossessables.Count == 0)
-            {
-                Debug.Log("[Possession] No hay objetos poseíbles cerca.");
-                return;
-            }
+            if (nearbyPossessables.Count > 0)
+                outlineController.ShowOutlines(nearbyPossessables, currentTarget);
 
-            currentTarget = FindNearestFrom(nearbyPossessables);
-            currentState  = PossessionState.Scanning;
-
-            outlineController.ShowOutlines(nearbyPossessables, currentTarget);
-
-            Debug.Log($"[Possession] Escaneando. Objetivo más cercano: {((MonoBehaviour)currentTarget).gameObject.name}");
+            Debug.Log($"[Possession] Escaneando.");
         }
 
         private void TryPossess()
