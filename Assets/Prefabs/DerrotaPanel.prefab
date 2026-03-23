@@ -617,7 +617,7 @@ GameObject:
   - component: {fileID: 1530568233668239453}
   - component: {fileID: 4733597439989739636}
   - component: {fileID: 4094119495945059506}
-  - component: {fileID: 2799096899147759027}
+  - component: {fileID: -189023877411456125}
   m_Layer: 5
   m_Name: DerrotaPanel
   m_TagString: Untagged
@@ -684,7 +684,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2799096899147759027
+--- !u!114 &-189023877411456125
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -693,10 +693,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4701774889333926916}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f364a6c374950e43b5bd5d7f2a9450b, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b92c77257e2b7e43b0063434af68f0c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DerrotaMenu
-  menuPrincipal: 
+  m_EditorClassIdentifier: 
   sonidoDerrota: {fileID: 0}
 --- !u!1 &5339460070373286005
 GameObject:
@@ -1035,7 +1034,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2799096899147759027}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: DerrotaMenu, Assembly-CSharp
         m_MethodName: ReiniciarNivel
         m_Mode: 1
