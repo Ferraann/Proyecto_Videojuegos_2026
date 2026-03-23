@@ -12,18 +12,18 @@ public class VisionCone : MonoBehaviour
     public int resolution = 100;
 
     public Color normalColor = Color.green;
-    public Color alertColor = Color.red;
+    public Color alertColor  = Color.red;
 
     public bool playerDetected = false;
 
-    public GameObject derrotaPanel;
+    public GameObject    derrotaPanel;
     public MonoBehaviour movimientoJugador;
-    public AudioSource sonidoDerrota;
+    public AudioSource   sonidoDerrota;
+    public DetectionHUD  detectionHUD;
 
     public float tiempoDeteccion = 1f;
-    float detectionTimer = 0f;
-
-    bool derrotaActivada = false;
+    float detectionTimer  = 0f;
+    bool  derrotaActivada = false;
 
     Mesh mesh;
 
@@ -37,6 +37,9 @@ public class VisionCone : MonoBehaviour
 
         if (derrotaPanel != null)
             derrotaPanel.SetActive(false);
+
+        if (detectionHUD != null)
+            detectionHUD.Hide();
     }
 
     void Update()
@@ -53,21 +56,28 @@ public class VisionCone : MonoBehaviour
 
             detectionTimer += Time.deltaTime;
 
+            if (detectionHUD != null)
+                detectionHUD.Show(tiempoDeteccion - detectionTimer);
+
             if (detectionTimer >= tiempoDeteccion)
-            {
                 ActivarDerrota();
-            }
         }
         else
         {
             visionConeMaterial.color = normalColor;
             detectionTimer = 0f;
+
+            if (detectionHUD != null)
+                detectionHUD.Hide();
         }
     }
 
     void ActivarDerrota()
     {
         derrotaActivada = true;
+
+        if (detectionHUD != null)
+            detectionHUD.Hide();
 
         if (GameManager.Instance != null)
             GameManager.Instance.FinalizarDerrota();
@@ -86,13 +96,13 @@ public class VisionCone : MonoBehaviour
 
     void DrawVisionCone()
     {
-        int vertexCount = resolution + 1;
-        Vector3[] vertices = new Vector3[vertexCount];
-        int[] triangles = new int[(resolution - 1) * 3];
+        int      vertexCount = resolution + 1;
+        Vector3[] vertices   = new Vector3[vertexCount];
+        int[]     triangles  = new int[(resolution - 1) * 3];
 
         vertices[0] = Vector3.zero;
 
-        float angleStep = visionAngle / (resolution - 1);
+        float angleStep    = visionAngle / (resolution - 1);
         float currentAngle = -visionAngle / 2;
 
         for (int i = 0; i < resolution; i++)
@@ -102,7 +112,7 @@ public class VisionCone : MonoBehaviour
             Vector3 dir = new Vector3(Mathf.Sin(rad), 0, Mathf.Cos(rad));
             dir = transform.rotation * dir;
 
-            Ray ray = new Ray(transform.position, dir);
+            Ray        ray = new Ray(transform.position, dir);
             RaycastHit hit;
 
             float distance = visionRange;
@@ -112,9 +122,7 @@ public class VisionCone : MonoBehaviour
                 distance = hit.distance;
 
                 if (hit.collider.CompareTag("Player"))
-                {
                     playerDetected = true;
-                }
             }
 
             Vector3 point = dir * distance;
@@ -126,13 +134,13 @@ public class VisionCone : MonoBehaviour
         for (int i = 0; i < resolution - 1; i++)
         {
             int index = i * 3;
-            triangles[index] = 0;
+            triangles[index]     = 0;
             triangles[index + 1] = i + 1;
             triangles[index + 2] = i + 2;
         }
 
         mesh.Clear();
-        mesh.vertices = vertices;
+        mesh.vertices  = vertices;
         mesh.triangles = triangles;
         mesh.RecalculateNormals();
     }
