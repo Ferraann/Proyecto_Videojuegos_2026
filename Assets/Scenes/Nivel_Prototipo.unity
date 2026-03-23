@@ -736,12 +736,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mensajeUI: {fileID: 1009316820}
   textoSobrePuerta: {fileID: 0}
-  pantallaCargaUI: {fileID: 0}
+  panelVictoria: {fileID: 0}
   animatorPuerta: {fileID: 589484908}
   nombreAnimacion: AbrirPuerta
   jugador: {fileID: 224975453}
   puntoDestino: {fileID: 861652237}
   velocidadJugador: 2.5
+  audioVictoria: {fileID: 0}
 --- !u!65 &589484907
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2593,12 +2594,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mensajeUI: {fileID: 1009316820}
   textoSobrePuerta: {fileID: 0}
-  pantallaCargaUI: {fileID: 0}
+  panelVictoria: {fileID: 0}
   animatorPuerta: {fileID: 0}
   nombreAnimacion: AbrirPuerta
   jugador: {fileID: 0}
   puntoDestino: {fileID: 0}
   velocidadJugador: 2.5
+  audioVictoria: {fileID: 0}
 --- !u!1 &1639417666 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3780348248182164018, guid: 772bcb8039c8d62489c7b1de889ec7a4, type: 3}
@@ -3368,6 +3370,10 @@ MonoBehaviour:
   normalColor: {r: 0, g: 1, b: 0, a: 0.5294118}
   alertColor: {r: 1, g: 0, b: 0, a: 0.5294118}
   playerDetected: 0
+  derrotaPanel: {fileID: 0}
+  movimientoJugador: {fileID: 0}
+  sonidoDerrota: {fileID: 0}
+  tiempoDeteccion: 1
 --- !u!23 &1963272712
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3799,6 +3805,10 @@ PrefabInstance:
     - target: {fileID: 3780348248182164018, guid: 772bcb8039c8d62489c7b1de889ec7a4, type: 3}
       propertyPath: m_Name
       value: Jugador
+      objectReference: {fileID: 0}
+    - target: {fileID: 3780348248182164018, guid: 772bcb8039c8d62489c7b1de889ec7a4, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
