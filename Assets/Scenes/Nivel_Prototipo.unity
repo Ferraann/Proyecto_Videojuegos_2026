@@ -877,12 +877,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mensajeUI: {fileID: 1009316820}
   textoSobrePuerta: {fileID: 0}
-  pantallaCargaUI: {fileID: 0}
+  panelVictoria: {fileID: 1446516478}
   animatorPuerta: {fileID: 589484908}
   nombreAnimacion: AbrirPuerta
-  jugador: {fileID: 224975453}
+  jugador: {fileID: 1085320232}
   puntoDestino: {fileID: 861652237}
   velocidadJugador: 2.5
+  audioVictoria: {fileID: 0}
 --- !u!65 &589484907
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2633,6 +2634,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+--- !u!1 &1446516478 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8882523590668280112, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+  m_PrefabInstance: {fileID: 1385440190}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1544737091 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8876022638504917557, guid: 13d3cab08aaf9ad4b901bbb85ab89a12, type: 3}
@@ -2713,7 +2719,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1516444853842729103, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
   m_PrefabInstance: {fileID: 1385440190}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1446516478}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5b000de541381534f8583e190673326e, type: 3}
@@ -3042,12 +3048,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mensajeUI: {fileID: 1009316820}
   textoSobrePuerta: {fileID: 0}
-  pantallaCargaUI: {fileID: 0}
+  panelVictoria: {fileID: 0}
   animatorPuerta: {fileID: 0}
   nombreAnimacion: AbrirPuerta
   jugador: {fileID: 0}
   puntoDestino: {fileID: 0}
   velocidadJugador: 2.5
+  audioVictoria: {fileID: 0}
 --- !u!1 &1639417666 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3780348248182164018, guid: 772bcb8039c8d62489c7b1de889ec7a4, type: 3}
@@ -4271,6 +4278,10 @@ PrefabInstance:
     - target: {fileID: 3780348248182164018, guid: 772bcb8039c8d62489c7b1de889ec7a4, type: 3}
       propertyPath: m_Name
       value: Jugador
+      objectReference: {fileID: 0}
+    - target: {fileID: 3780348248182164018, guid: 772bcb8039c8d62489c7b1de889ec7a4, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
