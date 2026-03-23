@@ -23,7 +23,7 @@ namespace Possession
 
                 // Ajusta la altura al suelo bajo ese punto
                 if (Physics.Raycast(candidate + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 10f))
-                    candidate.y = hit.point.y + playerHalfHeight;
+                    candidate.y = hit.point.y;
 
                 if (IsPositionFree(candidate, playerHalfHeight, playerRadius))
                 {
