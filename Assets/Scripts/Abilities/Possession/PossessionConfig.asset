@@ -16,4 +16,4 @@ MonoBehaviour:
   mediumSpeed: 5
   heavySpeed: 2.5
   detectionRadius: 7.5
-  spawnSearchRadius: 3
+  spawnSearchRadius: 2

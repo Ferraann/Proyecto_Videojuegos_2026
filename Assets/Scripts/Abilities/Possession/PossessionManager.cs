@@ -5,10 +5,13 @@ namespace Possession
 {
     public class PossessionManager : MonoBehaviour
     {
-        [SerializeField] private PossessionConfig  config;
-        [SerializeField] private Transform         playerTransform;
-        [SerializeField] private OutlineController outlineController;
-        [SerializeField] private Camara            camara;
+        [SerializeField] private PossessionConfig    config;
+        [SerializeField] private Transform           playerTransform;
+        [SerializeField] private OutlineController   outlineController;
+        [SerializeField] private Camara              camara;
+        [SerializeField] private PlayerMovimiento    playerMovimiento;
+        [SerializeField] private CharacterController playerController;
+        [SerializeField] private GameObject          playerModel;
 
         private InputHandler       inputHandler;
         private PossessionState    currentState       = PossessionState.Free;
@@ -123,7 +126,9 @@ namespace Possession
 
             currentState = PossessionState.Possessing;
             outlineController.HideOutlines();
-            playerTransform.gameObject.SetActive(false);
+            playerMovimiento.enabled  = false;
+            playerController.enabled  = false;
+            playerModel.SetActive(false);
             camara.SetTarget(currentTarget.Transform);
 
             float speed = config.GetSpeedForWeight(currentTarget.WeightClass);
@@ -137,14 +142,20 @@ namespace Possession
             if (currentTarget == null) return;
 
             currentTarget.OnDepossess();
-            playerTransform.gameObject.SetActive(true);
-            camara.SetTarget(playerTransform);
 
             Vector3 spawnPosition = SpawnFinder.FindFreePosition(
                 currentTarget.Transform.position,
                 config.spawnSearchRadius
             );
+
+            CharacterController cc = playerController;
+            cc.enabled = false;
             playerTransform.position = spawnPosition;
+            cc.enabled = true;
+
+            playerModel.SetActive(true);
+            playerMovimiento.enabled = true;
+            camara.SetTarget(playerTransform);
 
             currentTarget = null;
             currentState  = PossessionState.Free;

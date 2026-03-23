@@ -395,7 +395,7 @@ CharacterController:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Height: 2
   m_Radius: 0.5
@@ -1007,9 +1007,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   config: {fileID: 11400000, guid: 1560a3edd62c6144685b3566c12b3fa1, type: 2}
-  playerTransform: {fileID: 224975453}
+  playerTransform: {fileID: 1085320232}
   outlineController: {fileID: 801272533}
   camara: {fileID: 952506072}
+  playerMovimiento: {fileID: 1639417671}
+  playerController: {fileID: 1639417672}
+  playerModel: {fileID: 224975452}
 --- !u!1 &825742427
 GameObject:
   m_ObjectHideFlags: 0
@@ -1142,7 +1145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5beb19c368832dd45aba7c7f14a8ac13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 224975453}
+  Player: {fileID: 1085320232}
   Suavizado: 5
 --- !u!81 &952506073
 AudioListener:
@@ -1425,7 +1428,7 @@ Transform:
   m_GameObject: {fileID: 1010234863}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.97, y: 7.0863495, z: -9.38}
+  m_LocalPosition: {x: 5.89, y: 7.0863495, z: -12.248169}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []

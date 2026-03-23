@@ -37,13 +37,15 @@ public class PlayerMovimiento : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+    if (!enabled) return;
         MoverJugadorEnPlano();
         AplicarGravedad();
     }
 
-    // Método para mover al jugador en el plano horizontal basado en la orientación de la cámara
+    // Mï¿½todo para mover al jugador en el plano horizontal basado en la orientaciï¿½n de la cï¿½mara
     private void MoverJugadorEnPlano()
     {
+        if (!controlador.enabled) return;
 
         // ---------------------------------------
         // Movimiento del personje (SOLO FLECHAS)
@@ -70,7 +72,7 @@ public class PlayerMovimiento : MonoBehaviour
         adelanteCamara.Normalize();
         derechaCamara.Normalize();
 
-        // Vector de dirección basado en las flechas
+        // Vector de direcciï¿½n basado en las flechas
         Vector3 direccionPlano = (derechaCamara * Horizontal + adelanteCamara * Vertical);
 
         // Normalizamos el vector para que no se mueva mas rapido en diagonal.
@@ -88,6 +90,7 @@ public class PlayerMovimiento : MonoBehaviour
 
     private void AplicarGravedad()
     {
+        if (!controlador.enabled) return;
         velocidadVertical.y += Gravedad * Time.deltaTime;
         controlador.Move(velocidadVertical * Time.deltaTime);
 
