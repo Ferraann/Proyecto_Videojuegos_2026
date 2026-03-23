@@ -420,6 +420,22 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: ResumeGame
       objectReference: {fileID: 0}
+    - target: {fileID: 2469314381086931442, guid: f4c43b45c21d016448f95d5c75bf2306, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2469314381086931442, guid: f4c43b45c21d016448f95d5c75bf2306, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2469314381086931442, guid: f4c43b45c21d016448f95d5c75bf2306, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 947692225}
+    - target: {fileID: 2469314381086931442, guid: f4c43b45c21d016448f95d5c75bf2306, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4672284655585519501, guid: f4c43b45c21d016448f95d5c75bf2306, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1160,7 +1176,7 @@ PrefabInstance:
     - target: {fileID: 1653659140639634030, guid: dc8eba4fa03bc664d8abf30c59595e7f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1581070441}
+      objectReference: {fileID: 1581070444}
     - target: {fileID: 1653659140639634030, guid: dc8eba4fa03bc664d8abf30c59595e7f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -1188,7 +1204,7 @@ PrefabInstance:
     - target: {fileID: 7625238756905311977, guid: dc8eba4fa03bc664d8abf30c59595e7f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1581070441}
+      objectReference: {fileID: 1581070444}
     - target: {fileID: 7625238756905311977, guid: dc8eba4fa03bc664d8abf30c59595e7f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: ReiniciarNivel
@@ -1197,10 +1213,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: DerrotaMenu, Assembly-CSharp
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2799096899147759027, guid: dc8eba4fa03bc664d8abf30c59595e7f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4701774889333926916, guid: dc8eba4fa03bc664d8abf30c59595e7f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1581070444}
   m_SourcePrefab: {fileID: 100100000, guid: dc8eba4fa03bc664d8abf30c59595e7f, type: 3}
 --- !u!1001 &730928155
 PrefabInstance:
@@ -1458,6 +1478,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 589484905}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &947692225 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5856242323908102769, guid: ca139ec21e0b5274a92e4bb1166f84e3, type: 3}
+  m_PrefabInstance: {fileID: 730928155}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &947692226 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2932222536096631543, guid: ca139ec21e0b5274a92e4bb1166f84e3, type: 3}
@@ -1468,7 +1493,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3063193665303902525, guid: ca139ec21e0b5274a92e4bb1166f84e3, type: 3}
   m_PrefabInstance: {fileID: 730928155}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 947692225}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0a36aa60ca48574c85e6df1a85bd2eb, type: 3}
@@ -2881,17 +2906,19 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1530568233668239453, guid: dc8eba4fa03bc664d8abf30c59595e7f, type: 3}
   m_PrefabInstance: {fileID: 725598568}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1581070441 stripped
+--- !u!114 &1581070444
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2799096899147759027, guid: dc8eba4fa03bc664d8abf30c59595e7f, type: 3}
-  m_PrefabInstance: {fileID: 725598568}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1581070439}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f364a6c374950e43b5bd5d7f2a9450b, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b92c77257e2b7e43b0063434af68f0c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DerrotaMenu
+  m_EditorClassIdentifier: 
+  sonidoDerrota: {fileID: 0}
 --- !u!1 &1636272717
 GameObject:
   m_ObjectHideFlags: 0

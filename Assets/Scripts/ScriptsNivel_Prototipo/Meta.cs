@@ -10,8 +10,8 @@ public class Meta : MonoBehaviour
     [Tooltip("El texto 3D flotante sobre la puerta")]
     public GameObject textoSobrePuerta;
 
-    [Tooltip("Arrastra aquí tu Canvas o panel de Pantalla de Carga/Victoria")]
-    public GameObject pantallaCargaUI;
+    [Tooltip("Arrastra aquí tu Canvas o panel de Victoria")]
+    public GameObject panelVictoria; // Antes se llamaba pantallaCargaUI
 
     [Header("Animación de la Puerta")]
     [Tooltip("El objeto que tiene el componente Animator")]
@@ -30,20 +30,35 @@ public class Meta : MonoBehaviour
     [Tooltip("Velocidad a la que el jugador camina hacia la puerta")]
     public float velocidadJugador = 2.5f;
 
+    [Header("Audio Victoria")]
+    [Tooltip("Arrastra aquí el AudioSource que reproducirá la música/sonido de victoria")]
+    public AudioSource audioVictoria;
+
     private bool jugadorCerca = false;
     private bool metaAlcanzada = false; // Evita que se active varias veces
 
+    private void Awake()
+    {
+        // Preparamos el audio de victoria para que no suene de golpe al arrancar
+        if (audioVictoria != null)
+        {
+            audioVictoria.playOnAwake = false;
+            audioVictoria.loop = false;
+            audioVictoria.Stop();
+        }
+    }
+
     void Start()
     {
-        // Nos aseguramos de que toda la interfaz esté oculta al empezar
+        // Nos aseguramos de que toda la interfaz esté oculta al empezar el nivel
         if (mensajeUI != null) mensajeUI.SetActive(false);
         if (textoSobrePuerta != null) textoSobrePuerta.SetActive(false);
-        if (pantallaCargaUI != null) pantallaCargaUI.SetActive(false);
+        if (panelVictoria != null) panelVictoria.SetActive(false);
     }
 
     void Update()
     {
-        // Solo funciona si el jugador está cerca, pulsa E, y AÚN NO ha llegado a la meta
+        // Si el jugador está cerca, pulsa E, y AÚN NO ha llegado a la meta
         if (jugadorCerca && !metaAlcanzada && Input.GetKeyDown(KeyCode.E))
         {
             StartCoroutine(RutinaMeta());
@@ -70,14 +85,16 @@ public class Meta : MonoBehaviour
         }
     }
 
-    // Corrutina que controla la secuencia final
+    // Corrutina que controla la secuencia completa
     private IEnumerator RutinaMeta()
     {
-        metaAlcanzada = true;
+        metaAlcanzada = true; // Bloqueamos la meta
 
+        // 1. Ocultamos los textos de interacción
         if (mensajeUI != null) mensajeUI.SetActive(false);
         if (textoSobrePuerta != null) textoSobrePuerta.SetActive(false);
 
+        // 2. Reproducimos la animación de abrir la puerta
         if (animatorPuerta != null)
         {
             animatorPuerta.Play(nombreAnimacion);
@@ -85,18 +102,17 @@ public class Meta : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        // Guardamos las referencias del jugador antes de entrar al bucle
+        // Guardamos las referencias del jugador
         CharacterController cc = null;
         Rigidbody rb = null;
         PlayerMovimiento scriptMovimiento = null;
 
         if (jugador != null && puntoDestino != null)
         {
-            // 1. Apagamos el script de movimiento para que no pelee con la cinemática
+            // Apagamos los controles y las físicas para que el jugador sea un "actor" en la cinemática
             scriptMovimiento = jugador.GetComponent<PlayerMovimiento>();
             if (scriptMovimiento != null) scriptMovimiento.enabled = false;
 
-            // 2. Apagamos físicas
             cc = jugador.GetComponent<CharacterController>();
             if (cc != null) cc.enabled = false;
 
@@ -107,7 +123,7 @@ public class Meta : MonoBehaviour
             float tiempoMaximo = 4f;
             float tiempoActual = 0f;
 
-            // Caminamos...
+            // 3. Caminamos hacia adentro de la puerta...
             while (Vector3.Distance(jugador.position, destinoPlano) > 0.1f && tiempoActual < tiempoMaximo)
             {
                 jugador.position = Vector3.MoveTowards(jugador.position, destinoPlano, velocidadJugador * Time.deltaTime);
@@ -118,20 +134,40 @@ public class Meta : MonoBehaviour
 
         Debug.Log("Cinemática de caminar terminada.");
 
-        // =========================================================
-        // VOLVEMOS A ENCENDER LAS FÍSICAS Y EL SCRIPT DE MOVIMIENTO
-        // =========================================================
-        if (cc != null) cc.enabled = true;
-        if (rb != null) rb.isKinematic = false;
-        if (scriptMovimiento != null) scriptMovimiento.enabled = true; // <--- LO VOLVEMOS A ENCENDER
-
+        // Esperamos 1 segundo de cortesía tras haber entrado
         yield return new WaitForSeconds(1f);
 
-        // Encendemos el Canvas
-        if (pantallaCargaUI != null)
+        // =========================================================
+        // 4. LÓGICA DE VICTORIA (Tras terminar de caminar)
+        // =========================================================
+
+        // Avisamos al GameManager para que calcule puntuaciones, tiempo, etc.
+        if (GameManager.Instance != null)
         {
-            pantallaCargaUI.SetActive(true);
-            Debug.Log("Canvas activado con éxito.");
+            GameManager.Instance.FinalizarNivel();
         }
+
+        // Encendemos el Canvas de Victoria
+        if (panelVictoria != null)
+        {
+            panelVictoria.SetActive(true);
+        }
+
+        // Reproducimos el sonido de victoria (ignora la pausa por si acaso)
+        if (audioVictoria != null)
+        {
+            audioVictoria.ignoreListenerPause = true;
+            audioVictoria.Stop();
+            audioVictoria.Play();
+        }
+
+        // Liberamos y mostramos el ratón para poder pulsar los botones del menú
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        // Pausamos el juego
+        Time.timeScale = 0f;
+
+        Debug.Log("Menú de victoria cargado y juego pausado.");
     }
 }
