@@ -3,7 +3,15 @@ using UnityEngine.SceneManagement;
 
 public class DerrotaMenu : MonoBehaviour
 {
-    public string menuPrincipal;
+    public AudioSource sonidoDerrota;
+
+    void OnEnable()
+    {
+        if (sonidoDerrota != null)
+        {
+            sonidoDerrota.Play();
+        }
+    }
 
     public void ReiniciarNivel()
     {
@@ -14,6 +22,6 @@ public class DerrotaMenu : MonoBehaviour
     public void MenuPrincipal()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(menuPrincipal);
+        SceneManager.LoadScene("MenuInicial");
     }
 }
