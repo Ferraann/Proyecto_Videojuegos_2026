@@ -26,6 +26,10 @@ public class GameManager : MonoBehaviour
     public GameObject estrella2;
     public GameObject estrella3;
 
+    [Header("UI Derrota")]
+    [Tooltip("Arrastra aquí el Canvas o Panel que contiene tu script DerrotaMenu")]
+    public GameObject panelDerrota; // <--- NUEVA VARIABLE
+
     private void Awake()
     {
         if (Instance == null)
@@ -40,9 +44,11 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // Nos aseguramos de que las estrellas y la pantalla de derrota estén ocultas al empezar
         if (estrella1 != null) estrella1.SetActive(false);
         if (estrella2 != null) estrella2.SetActive(false);
         if (estrella3 != null) estrella3.SetActive(false);
+        if (panelDerrota != null) panelDerrota.SetActive(false); // <--- NUEVO
     }
 
     private void Update()
@@ -78,6 +84,27 @@ public class GameManager : MonoBehaviour
 
         int estrellas = CalcularEstrellas();
         MostrarEstrellas(estrellas);
+    }
+
+    // =========================================================
+    // NUEVA FUNCIÓN: Esto es lo que busca el VisionCone del enemigo
+    // =========================================================
+    public void FinalizarDerrota()
+    {
+        nivelTerminado = true; // Pausamos el contador de tiempo
+
+        // Encendemos la pantalla de derrota
+        if (panelDerrota != null)
+        {
+            panelDerrota.SetActive(true);
+        }
+
+        // Pausamos el juego para que el enemigo no siga atacando
+        Time.timeScale = 0f;
+
+        // Desbloqueamos el ratón para que puedas hacer clic en "Reiniciar" o "Menú Principal"
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private int CalcularPuntuacion()

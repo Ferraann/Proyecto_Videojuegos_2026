@@ -16,6 +16,15 @@ public class VisionCone : MonoBehaviour
 
     public bool playerDetected = false;
 
+    public GameObject derrotaPanel;
+    public MonoBehaviour movimientoJugador;
+    public AudioSource sonidoDerrota;
+
+    public float tiempoDeteccion = 1f;
+    float detectionTimer = 0f;
+
+    bool derrotaActivada = false;
+
     Mesh mesh;
 
     void Start()
@@ -25,10 +34,15 @@ public class VisionCone : MonoBehaviour
         GetComponent<MeshRenderer>().material = visionConeMaterial;
 
         visionConeMaterial.color = normalColor;
+
+        if (derrotaPanel != null)
+            derrotaPanel.SetActive(false);
     }
 
     void Update()
     {
+        if (derrotaActivada) return;
+
         playerDetected = false;
 
         DrawVisionCone();
@@ -36,12 +50,38 @@ public class VisionCone : MonoBehaviour
         if (playerDetected)
         {
             visionConeMaterial.color = alertColor;
-            Debug.Log("Jugador detectado");
+
+            detectionTimer += Time.deltaTime;
+
+            if (detectionTimer >= tiempoDeteccion)
+            {
+                ActivarDerrota();
+            }
         }
         else
         {
             visionConeMaterial.color = normalColor;
+            detectionTimer = 0f;
         }
+    }
+
+    void ActivarDerrota()
+    {
+        derrotaActivada = true;
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.FinalizarDerrota();
+
+        if (derrotaPanel != null)
+            derrotaPanel.SetActive(true);
+
+        if (movimientoJugador != null)
+            movimientoJugador.enabled = false;
+
+        if (sonidoDerrota != null)
+            sonidoDerrota.Play();
+
+        Time.timeScale = 0f;
     }
 
     void DrawVisionCone()
@@ -79,8 +119,6 @@ public class VisionCone : MonoBehaviour
 
             Vector3 point = dir * distance;
             vertices[i + 1] = transform.InverseTransformPoint(transform.position + point);
-
-            Debug.DrawRay(transform.position, dir * distance, Color.red);
 
             currentAngle += angleStep;
         }
