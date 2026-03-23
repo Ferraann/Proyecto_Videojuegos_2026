@@ -1,24 +1,44 @@
-using System.Collections; // Necesario para los tiempos de espera
+using System.Collections;
 using UnityEngine;
 
 public class Meta : MonoBehaviour
 {
     [Header("Textos e Interfaz")]
+    [Tooltip("El texto del Canvas que dice 'Pulsa E'")]
     public GameObject mensajeUI;
+
+    [Tooltip("El texto 3D flotante sobre la puerta")]
     public GameObject textoSobrePuerta;
 
+    [Tooltip("Arrastra aquí tu Canvas o panel de Pantalla de Carga/Victoria")]
+    public GameObject pantallaCargaUI;
+
     [Header("Animación de la Puerta")]
-    public Animator animatorPuerta; // Arrastra aquí el objeto que tiene el Animator
-    public string nombreAnimacion = "AbrirPuerta"; // El nombre exacto del estado en el Animator
-    public float tiempoDeEspera = 2f; // Segundos que dura tu animación antes de mostrar la victoria
+    [Tooltip("El objeto que tiene el componente Animator")]
+    public Animator animatorPuerta;
+
+    [Tooltip("El nombre exacto del estado en el Animator")]
+    public string nombreAnimacion = "AbrirPuerta";
+
+    [Header("Cinemática del Jugador")]
+    [Tooltip("Arrastra a tu jugador aquí")]
+    public Transform jugador;
+
+    [Tooltip("Objeto vacío detrás de la puerta donde caminará el jugador")]
+    public Transform puntoDestino;
+
+    [Tooltip("Velocidad a la que el jugador camina hacia la puerta")]
+    public float velocidadJugador = 2.5f;
 
     private bool jugadorCerca = false;
-    private bool metaAlcanzada = false; // Para evitar que se pulse la E varias veces
+    private bool metaAlcanzada = false; // Evita que se active varias veces
 
     void Start()
     {
+        // Nos aseguramos de que toda la interfaz esté oculta al empezar
         if (mensajeUI != null) mensajeUI.SetActive(false);
         if (textoSobrePuerta != null) textoSobrePuerta.SetActive(false);
+        if (pantallaCargaUI != null) pantallaCargaUI.SetActive(false);
     }
 
     void Update()
@@ -50,46 +70,68 @@ public class Meta : MonoBehaviour
         }
     }
 
-    // Esta es la Corrutina que controla los tiempos
+    // Corrutina que controla la secuencia final
     private IEnumerator RutinaMeta()
     {
-        metaAlcanzada = true; // Bloqueamos la puerta para que no se active de nuevo
+        metaAlcanzada = true;
 
-        // 1. Ocultamos los textos de "Pulsa E"
         if (mensajeUI != null) mensajeUI.SetActive(false);
         if (textoSobrePuerta != null) textoSobrePuerta.SetActive(false);
 
-        // 2. Reproducimos la animación
         if (animatorPuerta != null)
         {
             animatorPuerta.Play(nombreAnimacion);
         }
-        else
+
+        yield return new WaitForSeconds(0.5f);
+
+        // Guardamos las referencias del jugador antes de entrar al bucle
+        CharacterController cc = null;
+        Rigidbody rb = null;
+        PlayerMovimiento scriptMovimiento = null;
+
+        if (jugador != null && puntoDestino != null)
         {
-            Debug.LogWarning("Falta asignar el Animator de la puerta en el inspector.");
+            // 1. Apagamos el script de movimiento para que no pelee con la cinemática
+            scriptMovimiento = jugador.GetComponent<PlayerMovimiento>();
+            if (scriptMovimiento != null) scriptMovimiento.enabled = false;
+
+            // 2. Apagamos físicas
+            cc = jugador.GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false;
+
+            rb = jugador.GetComponent<Rigidbody>();
+            if (rb != null) rb.isKinematic = true;
+
+            Vector3 destinoPlano = new Vector3(puntoDestino.position.x, jugador.position.y, puntoDestino.position.z);
+            float tiempoMaximo = 4f;
+            float tiempoActual = 0f;
+
+            // Caminamos...
+            while (Vector3.Distance(jugador.position, destinoPlano) > 0.1f && tiempoActual < tiempoMaximo)
+            {
+                jugador.position = Vector3.MoveTowards(jugador.position, destinoPlano, velocidadJugador * Time.deltaTime);
+                tiempoActual += Time.deltaTime;
+                yield return null;
+            }
         }
 
-        // 3. Esperamos a que la animación termine
-        yield return new WaitForSeconds(tiempoDeEspera);
+        Debug.Log("Cinemática de caminar terminada.");
 
-        // 4. Mostramos el mensaje de meta final
-        Debug.Log("¡Has llegado a la meta!");
+        // =========================================================
+        // VOLVEMOS A ENCENDER LAS FÍSICAS Y EL SCRIPT DE MOVIMIENTO
+        // =========================================================
+        if (cc != null) cc.enabled = true;
+        if (rb != null) rb.isKinematic = false;
+        if (scriptMovimiento != null) scriptMovimiento.enabled = true; // <--- LO VOLVEMOS A ENCENDER
 
-        // =====================================================================
-        // AQUÍ PUEDES AÑADIR EL CÓDIGO PARA MOSTRAR LA PANTALLA DE VICTORIA
-        // =====================================================================
+        yield return new WaitForSeconds(1f);
 
-        // Ejemplo de cómo sería (descomenta borrando las "//" cuando tengas tu pantalla):
-
-        // if (pantallaVictoriaUI != null)
-        // {
-        //     pantallaVictoriaUI.SetActive(true); // Activa el Canvas de victoria
-        // }
-        // 
-        // Cursor.lockState = CursorLockMode.None; // Muestra el ratón si lo tenías oculto
-        // Cursor.visible = true;
-        // Time.timeScale = 0f; // Pausa el juego (opcional)
-
-        // =====================================================================
+        // Encendemos el Canvas
+        if (pantallaCargaUI != null)
+        {
+            pantallaCargaUI.SetActive(true);
+            Debug.Log("Canvas activado con éxito.");
+        }
     }
 }
