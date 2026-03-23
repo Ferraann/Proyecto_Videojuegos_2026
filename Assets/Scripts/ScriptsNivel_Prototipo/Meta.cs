@@ -88,10 +88,15 @@ public class Meta : MonoBehaviour
         // Guardamos las referencias del jugador antes de entrar al bucle
         CharacterController cc = null;
         Rigidbody rb = null;
+        PlayerMovimiento scriptMovimiento = null;
 
         if (jugador != null && puntoDestino != null)
         {
-            // Apagamos físicas
+            // 1. Apagamos el script de movimiento para que no pelee con la cinemática
+            scriptMovimiento = jugador.GetComponent<PlayerMovimiento>();
+            if (scriptMovimiento != null) scriptMovimiento.enabled = false;
+
+            // 2. Apagamos físicas
             cc = jugador.GetComponent<CharacterController>();
             if (cc != null) cc.enabled = false;
 
@@ -114,10 +119,11 @@ public class Meta : MonoBehaviour
         Debug.Log("Cinemática de caminar terminada.");
 
         // =========================================================
-        // ¡NUEVO!: VOLVEMOS A ENCENDER LAS FÍSICAS DEL JUGADOR
+        // VOLVEMOS A ENCENDER LAS FÍSICAS Y EL SCRIPT DE MOVIMIENTO
         // =========================================================
         if (cc != null) cc.enabled = true;
         if (rb != null) rb.isKinematic = false;
+        if (scriptMovimiento != null) scriptMovimiento.enabled = true; // <--- LO VOLVEMOS A ENCENDER
 
         yield return new WaitForSeconds(1f);
 
