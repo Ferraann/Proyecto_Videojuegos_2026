@@ -1,66 +1,131 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class DetectorCamara : MonoBehaviour
 {
-    [Header("Conexiones")]
-    public GeneradorCono cono;
+    [Header("Conexiones y Configuración")]
     public Transform jugador;
-
-    [Header("Configuración")]
-    public LayerMask capaObstaculos; // Aquí selecciona solo "Mapa"
     public string tagJugador = "Player";
+    public LayerMask capaObstaculos;
 
-    [Header("Ajustes de Derrota")]
-    public bool reiniciarAlPerder = true;
-    public float tiempoEspera = 1.0f;
+    [Header("Dimensiones del Cono")]
+    public float rangoVision = 10f;
+    [Range(0, 180)] public float aperturaHorizontal = 60f;
+    [Range(0, 180)] public float aperturaVertical = 40f;
+    public int resolucion = 20; // Calidad de la malla y precisión de detección
 
-    private bool yaDetectado = false;
+    [Header("Visualización")]
+    public Color colorNormal = new Color(0, 1, 0, 0.3f); // Verde
+    public Color colorAlerta = new Color(1, 0, 0, 0.5f); // Rojo
 
-    void Update()
+    private Mesh mesh;
+    private Material materialCono;
+    private bool detectado = false;
+
+    void Start()
     {
-        if (jugador == null || cono == null || yaDetectado) return;
+        // Inicializamos la malla y el material
+        mesh = new Mesh();
+        mesh.name = "Malla_Detector_Camara";
+        GetComponent<MeshFilter>().mesh = mesh;
+        materialCono = GetComponent<MeshRenderer>().material;
+        materialCono.color = colorNormal;
+    }
 
-        Vector3 haciaJugador = jugador.position - transform.position;
-        float distancia = haciaJugador.magnitude;
+    void LateUpdate()
+    {
+        if (detectado) return;
 
-        // 1. ¿Está cerca?
-        if (distancia <= cono.distanciaVision)
+        bool encontrado = false;
+        GenerarConoYDetectar(ref encontrado);
+
+        if (encontrado)
         {
-            // 2. ¿Está en el ángulo del cono?
-            float anguloApertura = Mathf.Atan2(cono.radioBase, cono.distanciaVision) * Mathf.Rad2Deg;
-            float anguloAlJugador = Vector3.Angle(transform.forward, haciaJugador.normalized);
+            LogicaPerder();
+        }
+    }
 
-            if (anguloAlJugador <= anguloApertura)
+    void GenerarConoYDetectar(ref bool hayContacto)
+    {
+        List<Vector3> vertices = new List<Vector3>();
+        vertices.Add(Vector3.zero); // Origen (punta de la cámara)
+
+        // Bucle para crear la rejilla de puntos (filas y columnas)
+        for (int y = 0; y <= resolucion; y++)
+        {
+            float tY = (float)y / resolucion;
+            float angY = Mathf.Lerp(-aperturaVertical / 2, aperturaVertical / 2, tY);
+
+            for (int x = 0; x <= resolucion; x++)
             {
-                // 3. ¿Hay visión directa? 
-                // Lanzamos un rayo. Si no choca con nada de la capa "Mapa", vemos al jugador.
-                if (!Physics.Linecast(transform.position, jugador.position, capaObstaculos))
+                float tX = (float)x / resolucion;
+                float angX = Mathf.Lerp(-aperturaHorizontal / 2, aperturaHorizontal / 2, tX);
+
+                // Dirección local del rayo
+                Vector3 dirLocal = Quaternion.Euler(angY, angX, 0) * Vector3.forward;
+                Vector3 dirGlobal = transform.TransformDirection(dirLocal);
+
+                float distanciaFinal = rangoVision;
+
+                // LANZAMIENTO DEL RAYO (Igual que en VisionCone)
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, dirGlobal, out hit, rangoVision))
                 {
-                    Perder();
+                    distanciaFinal = hit.distance;
+
+                    // Si choca con el jugador, marcamos detección
+                    if (hit.collider.CompareTag(tagJugador))
+                    {
+                        hayContacto = true;
+                    }
                 }
+
+                // Añadimos el punto a la lista de vértices de la malla
+                vertices.Add(dirLocal * distanciaFinal);
             }
         }
+
+        // --- CONSTRUCCIÓN DE TRIÁNGULOS (Lados y Tapa) ---
+        List<int> tri = new List<int>();
+        int vFila = resolucion + 1;
+
+        for (int y = 0; y < resolucion; y++)
+        {
+            for (int x = 0; x < resolucion; x++)
+            {
+                int i = y * vFila + x + 1;
+
+                // Triángulos de la cara frontal (tapa del cono)
+                tri.Add(i); tri.Add(i + 1); tri.Add(i + vFila);
+                tri.Add(i + vFila); tri.Add(i + 1); tri.Add(i + vFila + 1);
+
+                // Triángulos laterales (conectan los bordes con el origen 0)
+                if (y == 0) { tri.Add(0); tri.Add(i + 1); tri.Add(i); } // Borde superior
+                if (y == resolucion - 1) { tri.Add(0); tri.Add(i + vFila); tri.Add(i + vFila + 1); } // Borde inferior
+                if (x == 0) { tri.Add(0); tri.Add(i); tri.Add(i + vFila); } // Borde izquierdo
+                if (x == resolucion - 1) { tri.Add(0); tri.Add(i + vFila + 1); tri.Add(i + 1); } // Borde derecho
+            }
+        }
+
+        mesh.Clear();
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = tri.ToArray();
+        mesh.RecalculateNormals();
     }
 
-    void Perder()
+    void LogicaPerder()
     {
-        yaDetectado = true;
-        Debug.Log("<color=red><b>¡JUGADOR DETECTADO!</b></color>");
+        detectado = true;
+        materialCono.color = colorAlerta;
+        Debug.Log("<color=red><b>[CÁMARA]:</b> ¡JUGADOR DETECTADO! Reiniciando...</color>");
 
-        // Feedback visual: cono rojo
-        if (GetComponent<MeshRenderer>() != null)
-        {
-            GetComponent<MeshRenderer>().material.color = new Color(1, 0, 0, 0.4f);
-        }
-
-        if (reiniciarAlPerder)
-        {
-            Invoke("Reiniciar", tiempoEspera);
-        }
+        // Reiniciamos la escena tras 1 segundo
+        Invoke("ReiniciarNivel", 1.2f);
     }
 
-    void Reiniciar()
+    void ReiniciarNivel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
