@@ -56,6 +56,9 @@ public class DetectorCamara : MonoBehaviour
             materialCono.color = colorAlerta;
             timerDeteccion += Time.deltaTime; // Acumula tiempo mientras esté dentro
 
+            if (DetectionHUD.Instance != null)
+            DetectionHUD.Instance.ReportTimer(this, tiempoDeteccion - timerDeteccion);
+
             if (timerDeteccion >= tiempoDeteccion)
             {
                 ActivarDerrota();
@@ -65,6 +68,9 @@ public class DetectorCamara : MonoBehaviour
         {
             materialCono.color = colorNormal;
             timerDeteccion = 0f; // Reinicia el tiempo si sale del cono
+
+            if (DetectionHUD.Instance != null)
+            DetectionHUD.Instance.RemoveTimer(this);
         }
     }
 
@@ -130,6 +136,8 @@ public class DetectorCamara : MonoBehaviour
     {
         derrotaActivada = true;
 
+        if (DetectionHUD.Instance != null)
+            DetectionHUD.Instance.RemoveTimer(this);
         if (derrotaPanel != null)
             derrotaPanel.SetActive(true);
 
