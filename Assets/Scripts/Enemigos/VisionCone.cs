@@ -19,7 +19,6 @@ public class VisionCone : MonoBehaviour
     public GameObject    derrotaPanel;
     public MonoBehaviour movimientoJugador;
     public AudioSource   sonidoDerrota;
-    public DetectionHUD  detectionHUD;
 
     public float tiempoDeteccion = 1f;
     float detectionTimer  = 0f;
@@ -31,15 +30,15 @@ public class VisionCone : MonoBehaviour
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        GetComponent<MeshRenderer>().material = visionConeMaterial;
+
+        MeshRenderer mr = GetComponent<MeshRenderer>();
+        mr.material         = new Material(visionConeMaterial);
+        visionConeMaterial  = mr.material;
 
         visionConeMaterial.color = normalColor;
 
         if (derrotaPanel != null)
             derrotaPanel.SetActive(false);
-
-        if (detectionHUD != null)
-            detectionHUD.Hide();
     }
 
     void Update()
@@ -56,8 +55,8 @@ public class VisionCone : MonoBehaviour
 
             detectionTimer += Time.deltaTime;
 
-            if (detectionHUD != null)
-                detectionHUD.Show(tiempoDeteccion - detectionTimer);
+            if (DetectionHUD.Instance != null)
+                DetectionHUD.Instance.ReportTimer(this, tiempoDeteccion - detectionTimer);
 
             if (detectionTimer >= tiempoDeteccion)
                 ActivarDerrota();
@@ -67,8 +66,8 @@ public class VisionCone : MonoBehaviour
             visionConeMaterial.color = normalColor;
             detectionTimer = 0f;
 
-            if (detectionHUD != null)
-                detectionHUD.Hide();
+            if (DetectionHUD.Instance != null)
+                DetectionHUD.Instance.RemoveTimer(this);
         }
     }
 
@@ -76,8 +75,8 @@ public class VisionCone : MonoBehaviour
     {
         derrotaActivada = true;
 
-        if (detectionHUD != null)
-            detectionHUD.Hide();
+        if (DetectionHUD.Instance != null)
+            DetectionHUD.Instance.RemoveTimer(this);
 
         if (GameManager.Instance != null)
             GameManager.Instance.FinalizarDerrota();
