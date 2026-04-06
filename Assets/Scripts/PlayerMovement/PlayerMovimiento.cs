@@ -57,12 +57,11 @@ public class PlayerMovimiento : MonoBehaviour
         if (Input.GetKey(KeyCode.UpArrow)) Vertical += 1f;
         if (Input.GetKey(KeyCode.DownArrow)) Vertical -= 1f;
 
-        // 2. Leemos el input del mando. 
-        // Usamos GetAxisRaw para evitar el suavizado de Unity y frenar en seco.
-        Horizontal += Input.GetAxisRaw("Horizontal");
-        Vertical += Input.GetAxisRaw("Vertical");
+        // 2. Leemos EXCLUSIVAMENTE los nuevos ejes del mando
+        Horizontal += Input.GetAxisRaw("MandoHorizontal");
+        Vertical += Input.GetAxisRaw("MandoVertical");
 
-        // 3. Clampeamos los valores para que pulsar teclado y mando a la vez no sume más de 1 o baje de -1
+        // 3. Clampeamos los valores
         Horizontal = Mathf.Clamp(Horizontal, -1f, 1f);
         Vertical = Mathf.Clamp(Vertical, -1f, 1f);
 
