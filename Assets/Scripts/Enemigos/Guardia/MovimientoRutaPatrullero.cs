@@ -17,11 +17,18 @@ public class MovimientoRutaPatrullero : MonoBehaviour
     public float tiempoDeEspera = 1.5f;
     public float velocidadGiro = 5f;
 
-    [Header("Persecución")]
+    [Header("Persecución y Derrota")]
     public float velocidadPersecucion = 5f;
+    public float tiempoDeteccion = 1.5f; // Segundos que tarda en atraparte si te ve
+    public GameObject derrotaPanel;
+    public MonoBehaviour movimientoJugador;
 
     private Transform destinoActual;
     private bool estaCambiandoDePunto = false;
+
+    // Variables de control de tiempo
+    private float timerDeteccion = 0f;
+    private bool derrotaActivada = false;
 
     void Start()
     {
@@ -31,17 +38,49 @@ public class MovimientoRutaPatrullero : MonoBehaviour
 
     void Update()
     {
+        // Si ya nos ha pillado y el juego está parado, no hacemos nada más
+        if (derrotaActivada) return;
+
+        // LÓGICA DE VISIÓN Y TIEMPO
         if (ojos.viendoAlJugador)
         {
             estadoActual = Estado.Persiguiendo;
             estaCambiandoDePunto = false;
             StopAllCoroutines();
+
+            // Acumulamos tiempo mientras te ve
+            timerDeteccion += Time.deltaTime;
+
+            // Avisamos al círculo/barra del HUD
+            if (DetectionHUD.Instance != null)
+            {
+                DetectionHUD.Instance.ReportTimer(this, tiempoDeteccion - timerDeteccion);
+            }
+
+            // Si el tiempo llega al límite, perdemos
+            if (timerDeteccion >= tiempoDeteccion)
+            {
+                ActivarDerrota();
+            }
         }
-        else if (estadoActual == Estado.Persiguiendo)
+        else
         {
-            estadoActual = Estado.Patrullando;
+            // Si nos pierde de vista, vuelve a patrullar y resetea el contador
+            if (estadoActual == Estado.Persiguiendo)
+            {
+                estadoActual = Estado.Patrullando;
+            }
+
+            timerDeteccion = 0f;
+
+            // Borramos el círculo/barra del HUD
+            if (DetectionHUD.Instance != null)
+            {
+                DetectionHUD.Instance.RemoveTimer(this);
+            }
         }
 
+        // LÓGICA DE MOVIMIENTO
         switch (estadoActual)
         {
             case Estado.Patrullando:
@@ -60,7 +99,6 @@ public class MovimientoRutaPatrullero : MonoBehaviour
         Vector3 posPlana = new Vector3(transform.position.x, 0, transform.position.z);
         Vector3 destinoPlano = new Vector3(destinoActual.position.x, 0, destinoActual.position.z);
 
-        // ARREGLO 1: Reducimos la distancia a casi nada (0.05f)
         if (Vector3.Distance(posPlana, destinoPlano) > 0.05f)
         {
             transform.position = Vector3.MoveTowards(transform.position,
@@ -71,7 +109,6 @@ public class MovimientoRutaPatrullero : MonoBehaviour
         }
         else if (!estaCambiandoDePunto)
         {
-            // ARREGLO 2: Forzamos la posición para que pise el punto con exactitud matemática antes de parar
             transform.position = new Vector3(destinoPlano.x, transform.position.y, destinoPlano.z);
             StartCoroutine(SecuenciaCambioDePunto());
         }
@@ -114,10 +151,29 @@ public class MovimientoRutaPatrullero : MonoBehaviour
     {
         Vector3 direccion = objetivo - transform.position;
         direccion.y = 0;
-        if (direccion.magnitude > 0.01f) // Evita temblores
+        if (direccion.magnitude > 0.01f)
         {
             Quaternion rotacion = Quaternion.LookRotation(direccion);
             transform.rotation = Quaternion.Slerp(transform.rotation, rotacion, velocidadGiro * Time.deltaTime);
         }
+    }
+
+    void ActivarDerrota()
+    {
+        derrotaActivada = true;
+
+        if (DetectionHUD.Instance != null)
+            DetectionHUD.Instance.RemoveTimer(this);
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.FinalizarDerrota();
+
+        if (derrotaPanel != null)
+            derrotaPanel.SetActive(true);
+
+        if (movimientoJugador != null)
+            movimientoJugador.enabled = false;
+
+        Time.timeScale = 0f; // Pausa el juego
     }
 }
