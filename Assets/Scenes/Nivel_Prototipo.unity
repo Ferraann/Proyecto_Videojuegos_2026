@@ -955,6 +955,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e201729e70f18da4fa7469424238849e, type: 3}
   m_PrefabInstance: {fileID: 530258927}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &535008933 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1462739164288161591, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+  m_PrefabInstance: {fileID: 1385440190}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &582233370
 GameObject:
   m_ObjectHideFlags: 0
@@ -3946,6 +3957,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8882523590668280112, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1549571674}
     - targetCorrespondingSourceObject: {fileID: 427477044878335963, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1797942658}
@@ -4078,6 +4092,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b000de541381534f8583e190673326e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VictoryMenu
+--- !u!114 &1549571674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1446516478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3643c35cc877b584eb996b288e48694e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  imagenEstrella1: {fileID: 1820941458}
+  imagenEstrella2: {fileID: 535008933}
+  imagenEstrella3: {fileID: 1910005941}
+  colorEncendida: {r: 1, g: 1, b: 1, a: 1}
+  colorApagada: {r: 0.3, g: 0.3, b: 0.3, a: 0.5}
+  puntosPara1Estrella: 1000
+  puntosPara2Estrellas: 1500
+  puntosPara3Estrellas: 2000
 --- !u!1001 &1554639972
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5426,6 +5460,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1806053672}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1820941458 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2289436107681409737, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+  m_PrefabInstance: {fileID: 1385440190}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1001 &1831886118
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5621,6 +5666,17 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 4940130630941757914, guid: f4c43b45c21d016448f95d5c75bf2306, type: 3}
   m_PrefabInstance: {fileID: 234784148}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1910005941 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6921295617168325900, guid: 85ca4c7115443e14a949ef5f17196e98, type: 3}
+  m_PrefabInstance: {fileID: 1385440190}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &1915621004
 GameObject:
   m_ObjectHideFlags: 0
