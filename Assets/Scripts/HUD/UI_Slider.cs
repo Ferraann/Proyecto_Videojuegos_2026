@@ -3,10 +3,12 @@ using UnityEngine.UI;
 
 public class UI_Slider : MonoBehaviour
 {
-    public Slider      timeSlider;
-    public VisionCone  visionCone;
+    public Slider         timeSlider;
+    public VisionCone     visionCone;
+    public DetectorCamara detectorCamara;
 
     private CanvasGroup canvasGroup;
+    private float       tiempoDeteccion;
 
     void Start()
     {
@@ -14,10 +16,15 @@ public class UI_Slider : MonoBehaviour
         if (canvasGroup == null)
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
+        if (visionCone != null)
+            tiempoDeteccion = visionCone.tiempoDeteccion;
+        else if (detectorCamara != null)
+            tiempoDeteccion = detectorCamara.tiempoDeteccion;
+
         if (timeSlider != null)
         {
-            timeSlider.maxValue = visionCone != null ? visionCone.tiempoDeteccion : 1f;
-            timeSlider.value    = timeSlider.maxValue;
+            timeSlider.maxValue = tiempoDeteccion;
+            timeSlider.value    = tiempoDeteccion;
         }
 
         canvasGroup.alpha = 0f;
@@ -25,17 +32,31 @@ public class UI_Slider : MonoBehaviour
 
     void Update()
     {
-        if (visionCone == null || timeSlider == null) return;
+        if (timeSlider == null) return;
 
-        if (visionCone.playerDetected)
+        bool   detected = false;
+        float  timer    = 0f;
+
+        if (visionCone != null)
         {
-            canvasGroup.alpha    = 1f;
-            timeSlider.value     = visionCone.tiempoDeteccion - visionCone.DetectionTimer;
+            detected = visionCone.playerDetected;
+            timer    = visionCone.DetectionTimer;
+        }
+        else if (detectorCamara != null)
+        {
+            detected = detectorCamara.PlayerDetected;
+            timer    = detectorCamara.DetectionTimer;
+        }
+
+        if (detected)
+        {
+            canvasGroup.alpha  = 1f;
+            timeSlider.value   = tiempoDeteccion - timer;
         }
         else
         {
-            canvasGroup.alpha    = 0f;
-            timeSlider.value     = timeSlider.maxValue;
+            canvasGroup.alpha  = 0f;
+            timeSlider.value   = tiempoDeteccion;
         }
     }
 }
