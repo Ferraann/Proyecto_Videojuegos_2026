@@ -14,7 +14,6 @@ namespace Possession
         [SerializeField] private CharacterController playerController;
         [SerializeField] private GameObject          playerModel;
         [SerializeField] private float possessionDuration = 5f;
-        [SerializeField] private TMP_Text timerText;
 
         private InputHandler       inputHandler;
         private PossessionState    currentState       = PossessionState.Free;
@@ -32,7 +31,6 @@ namespace Possession
             inputHandler = GetComponent<InputHandler>();
             inputHandler.OnPossessionKeyPressed += HandlePossessionInput;
             inputHandler.OnCancelKeyPressed     += CancelScanning;
-            timerText.gameObject.SetActive(false);
         }
 
         private void OnDestroy()
@@ -48,7 +46,6 @@ namespace Possession
             {
                 possessionTimer -= Time.deltaTime;
                 
-                timerText.text = possessionTimer.ToString("F1");
 
                 if (possessionTimer <= 0f)
                 {
@@ -158,7 +155,6 @@ namespace Possession
 
             possessionTimer = possessionDuration;
             isTimerRunning = true;
-            timerText.gameObject.SetActive(true);
 
             Debug.Log($"[Possession] Poseyendo con velocidad: {speed}");
         }
@@ -187,7 +183,6 @@ namespace Possession
 
             currentTarget = null;
             currentState  = PossessionState.Free;
-            timerText.gameObject.SetActive(false);
 
             Debug.Log("[Possession] Jugador liberado.");
         }
