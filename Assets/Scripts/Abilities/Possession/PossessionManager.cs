@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using TMPro;
 
 namespace Possession
 {
@@ -13,16 +12,20 @@ namespace Possession
         [SerializeField] private PlayerMovimiento    playerMovimiento;
         [SerializeField] private CharacterController playerController;
         [SerializeField] private GameObject          playerModel;
-        [SerializeField] private float possessionDuration = 5f;
+        [SerializeField] private float               possessionDuration = 5f;
 
         private InputHandler       inputHandler;
         private PossessionState    currentState       = PossessionState.Free;
-        public  PossessionState    CurrentState       => currentState;
         private IPossessable       currentTarget;
         private List<IPossessable> nearbyPossessables = new List<IPossessable>();
         private float              scanRefreshTimer;
-        private float possessionTimer;
-        private bool  isTimerRunning = false;
+        private float              possessionTimer;
+        private bool               isTimerRunning     = false;
+
+        public PossessionState CurrentState       => currentState;
+        public float           PossessionTimer    => possessionTimer;
+        public float           PossessionDuration => possessionDuration;
+        public IPossessable    CurrentTarget      => currentTarget;
 
         // -------------------------------------------------- Unity
 
@@ -41,16 +44,13 @@ namespace Possession
 
         private void Update()
         {
-            // TIMER DE POSESIÓN
             if (currentState == PossessionState.Possessing && isTimerRunning)
             {
                 possessionTimer -= Time.deltaTime;
-                
 
                 if (possessionTimer <= 0f)
                 {
                     isTimerRunning = false;
-                    Debug.Log("[Possession] Tiempo agotado, expulsando jugador.");
                     Depossess();
                     return;
                 }
@@ -142,27 +142,25 @@ namespace Possession
         private void TryPossess()
         {
             if (currentTarget == null) return;
-
+        
             currentState = PossessionState.Possessing;
             outlineController.HideOutlines();
             playerMovimiento.enabled  = false;
             playerController.enabled  = false;
             playerModel.SetActive(false);
             camara.SetTarget(currentTarget.Transform);
-
+        
             float speed = config.GetSpeedForWeight(currentTarget.WeightClass);
             currentTarget.OnPossess(speed);
-
+        
             possessionTimer = possessionDuration;
-            isTimerRunning = true;
-
+            isTimerRunning  = true;
+        
             Debug.Log($"[Possession] Poseyendo con velocidad: {speed}");
         }
 
         private void Depossess()
         {
-            isTimerRunning = false;
-            
             if (currentTarget == null) return;
 
             currentTarget.OnDepossess();
