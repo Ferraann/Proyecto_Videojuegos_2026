@@ -1,11 +1,14 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PauseManager : MonoBehaviour
 {
     public GameObject pauseMenu;
     public GameObject pauseButton;
     public Animator pauseAnimator;
+
+    public Button[] abilityButtons; 
 
     private bool isPaused = false;
 
@@ -24,6 +27,12 @@ public class PauseManager : MonoBehaviour
         }
 
         Time.timeScale = 0f;
+
+        
+        foreach (Button btn in abilityButtons)
+        {
+            btn.interactable = false;
+        }
     }
 
     public void ResumeGame()
@@ -34,19 +43,11 @@ public class PauseManager : MonoBehaviour
         pauseButton.SetActive(true);
 
         Time.timeScale = 1f;
-    }
 
-    public void RestartLevel()
-    {
-        Time.timeScale = 1f;
-        isPaused = false;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
-    public void GoToMainMenu()
-    {
-        Time.timeScale = 1f;
-        isPaused = false;
-        SceneManager.LoadScene("MenuInicial");
+       
+        foreach (Button btn in abilityButtons)
+        {
+            btn.interactable = true;
+        }
     }
 }
