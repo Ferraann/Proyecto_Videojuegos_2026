@@ -11,10 +11,14 @@ public class GameManager : MonoBehaviour
 
     [Header("Llaves")]
     public int llavesRecogidas = 0;
-    public int llavesTotales = 7;
+    public int llavesTotales = 5;
 
     [Header("Puntuacion")]
     public int puntuacionFinal = 0;
+    private bool fueDerrota = false;
+
+    [Header("Deteccion")]
+    public float tiempoDetectado = 0f;
 
     [Header("UI Victoria")]
     public TMP_Text textoTiempo;
@@ -29,6 +33,9 @@ public class GameManager : MonoBehaviour
     [Header("UI Derrota")]
     [Tooltip("Arrastra aquí el Canvas o Panel que contiene tu script DerrotaMenu")]
     public GameObject panelDerrota; // <--- NUEVA VARIABLE
+    public TMP_Text textoTiempoDerrota;
+    public TMP_Text textoPuntuacionDerrota;
+    public TMP_Text textoLlavesDerrota;
 
     private void Awake()
     {
@@ -62,6 +69,11 @@ public class GameManager : MonoBehaviour
     public void RecogerLlave()
     {
         llavesRecogidas++;
+
+        if (llavesRecogidas > llavesTotales)
+        {
+            llavesRecogidas = llavesTotales;
+        }
     }
 
     public void FinalizarNivel()
@@ -80,7 +92,7 @@ public class GameManager : MonoBehaviour
             textoPuntuacion.text = "Puntuación: " + puntuacionFinal;
 
         if (textoLlaves != null)
-            textoLlaves.text = "Llaves recogidas: " + llavesRecogidas + "/" + llavesTotales;
+            textoLlaves.text = "Llaves: " + llavesRecogidas + "/" + llavesTotales;
 
         int estrellas = CalcularEstrellas();
         MostrarEstrellas(estrellas);
@@ -91,34 +103,66 @@ public class GameManager : MonoBehaviour
     // =========================================================
     public void FinalizarDerrota()
     {
-        nivelTerminado = true; // Pausamos el contador de tiempo
+        nivelTerminado = true;
+        fueDerrota = true;
 
-        // Encendemos la pantalla de derrota
+        int minutos = Mathf.FloorToInt(tiempoTranscurrido / 60f);
+        int segundos = Mathf.FloorToInt(tiempoTranscurrido % 60f);
+
+        puntuacionFinal = CalcularPuntuacion();
+
         if (panelDerrota != null)
         {
             panelDerrota.SetActive(true);
         }
 
-        // Pausamos el juego para que el enemigo no siga atacando
+        if (textoTiempoDerrota != null)
+        {
+            textoTiempoDerrota.text = "Tiempo: " + minutos.ToString("00") + ":" + segundos.ToString("00");
+        }
+
+        if (textoPuntuacionDerrota != null)
+        {
+            textoPuntuacionDerrota.text = "Puntuación: " + puntuacionFinal;
+        }
+
+        if (textoLlavesDerrota != null)
+        {
+            textoLlavesDerrota.text = "Llaves: " + llavesRecogidas + "/" + llavesTotales;
+        }
+
         Time.timeScale = 0f;
 
-        // Desbloqueamos el ratón para que puedas hacer clic en "Reiniciar" o "Menú Principal"
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
 
     private int CalcularPuntuacion()
     {
-        int puntosPorLlaves = llavesRecogidas * 100;
-        int bonusTiempo = Mathf.Max(0, 3000 - Mathf.FloorToInt(tiempoTranscurrido * 20f));
-        return puntosPorLlaves + bonusTiempo;
+        if (llavesRecogidas == 0)
+        {
+            return 0;
+        }
+
+        int puntosPorLlaves = llavesRecogidas * 200;
+        int bonusTiempo = Mathf.Max(0, 800 - Mathf.FloorToInt(tiempoTranscurrido * 8f));
+        int penalizacionDeteccion = Mathf.FloorToInt(tiempoDetectado * 30f);
+
+        int puntuacion = puntosPorLlaves + bonusTiempo - penalizacionDeteccion;
+
+        if (fueDerrota)
+        {
+            puntuacion -= Mathf.Min(300, puntuacion / 2);
+        }
+
+        return Mathf.Max(0, puntuacion);
     }
 
     private int CalcularEstrellas()
     {
-        if (tiempoTranscurrido <= 60f)
+        if (puntuacionFinal >= 1500)
             return 3;
-        else if (tiempoTranscurrido <= 90f)
+        else if (puntuacionFinal >= 1000)
             return 2;
         else
             return 1;
@@ -129,5 +173,10 @@ public class GameManager : MonoBehaviour
         if (estrella1 != null) estrella1.SetActive(cantidad >= 1);
         if (estrella2 != null) estrella2.SetActive(cantidad >= 2);
         if (estrella3 != null) estrella3.SetActive(cantidad >= 3);
+    }
+
+    public void AgregarTiempoDetectado(float tiempo)
+    {
+        tiempoDetectado += tiempo;
     }
 }

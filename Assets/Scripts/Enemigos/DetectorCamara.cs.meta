@@ -1,2 +1,15 @@
 fileFormatVersion: 2
 guid: 677c767e06a641f4a890f81c2f64a610
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - jugador: {instanceID: 0}
+  - derrotaPanel: {instanceID: 0}
+  - movimientoJugador: {instanceID: 0}
+  - sonidoDerrota: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

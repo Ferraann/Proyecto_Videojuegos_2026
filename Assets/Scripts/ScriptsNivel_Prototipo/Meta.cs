@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using TMPro;
 
 public class Meta : MonoBehaviour
 {
@@ -37,6 +38,8 @@ public class Meta : MonoBehaviour
     private bool jugadorCerca = false;
     private bool metaAlcanzada = false; // Evita que se active varias veces
 
+    private TextMeshPro mensajeUIText;
+
     private void Awake()
     {
         // Preparamos el audio de victoria para que no suene de golpe al arrancar
@@ -54,14 +57,26 @@ public class Meta : MonoBehaviour
         if (mensajeUI != null) mensajeUI.SetActive(false);
         if (textoSobrePuerta != null) textoSobrePuerta.SetActive(false);
         if (panelVictoria != null) panelVictoria.SetActive(false);
+
+        if (mensajeUI != null)
+        {
+            mensajeUIText = mensajeUI.GetComponent<TextMeshPro>();
+        }
     }
 
     void Update()
     {
-        // Si el jugador está cerca, pulsa E, y AÚN NO ha llegado a la meta
         if (jugadorCerca && !metaAlcanzada && Input.GetKeyDown(KeyCode.E))
         {
-            StartCoroutine(RutinaMeta());
+            if (KeyCounterUI.Instance != null && KeyCounterUI.Instance.HasAllKeys())
+            {
+                StartCoroutine(RutinaMeta());
+            }
+            else
+            {
+                Debug.Log("Faltan llaves para abrir la puerta.");
+                ActualizarTextoPuerta(false);
+            }
         }
     }
 
@@ -70,6 +85,8 @@ public class Meta : MonoBehaviour
         if (other.CompareTag("Player") && !metaAlcanzada)
         {
             jugadorCerca = true;
+            bool tieneLlaves = KeyCounterUI.Instance != null && KeyCounterUI.Instance.HasAllKeys();
+            ActualizarTextoPuerta(tieneLlaves);
             if (mensajeUI != null) mensajeUI.SetActive(true);
             if (textoSobrePuerta != null) textoSobrePuerta.SetActive(true);
         }
@@ -169,5 +186,19 @@ public class Meta : MonoBehaviour
         Time.timeScale = 0f;
 
         Debug.Log("Menú de victoria cargado y juego pausado.");
+    }
+
+    private void ActualizarTextoPuerta(bool tieneLlaves)
+    {
+        if (mensajeUIText == null) return;
+
+        if (tieneLlaves)
+        {
+            mensajeUIText.text = "Pulsa [E] para salir";
+        }
+        else
+        {
+            mensajeUIText.text = "Recoge todas las llaves";
+        }
     }
 }

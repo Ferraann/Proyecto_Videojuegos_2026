@@ -56,6 +56,9 @@ public class DetectorCamara : MonoBehaviour
             materialCono.color = colorAlerta;
             timerDeteccion += Time.deltaTime; // Acumula tiempo mientras esté dentro
 
+            if (GameManager.Instance != null)
+                GameManager.Instance.AgregarTiempoDetectado(Time.deltaTime);
+
             if (DetectionHUD.Instance != null)
             DetectionHUD.Instance.ReportTimer(this, tiempoDeteccion - timerDeteccion);
 
@@ -138,8 +141,6 @@ public class DetectorCamara : MonoBehaviour
 
         if (DetectionHUD.Instance != null)
             DetectionHUD.Instance.RemoveTimer(this);
-        if (derrotaPanel != null)
-            derrotaPanel.SetActive(true);
 
         if (movimientoJugador != null)
             movimientoJugador.enabled = false;
@@ -147,6 +148,7 @@ public class DetectorCamara : MonoBehaviour
         if (sonidoDerrota != null)
             sonidoDerrota.Play();
 
-        Time.timeScale = 0f; // Pausa el juego
+        if (GameManager.Instance != null)
+            GameManager.Instance.FinalizarDerrota();
     }
 }

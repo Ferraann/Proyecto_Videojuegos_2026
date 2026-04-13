@@ -16,35 +16,19 @@ public class VisionCone : MonoBehaviour
 
     public bool playerDetected = false;
 
-    public GameObject derrotaPanel;
-    public MonoBehaviour movimientoJugador;
-    public AudioSource sonidoDerrota;
-
-    public float tiempoDeteccion = 1f;
-    float detectionTimer = 0f;
-    bool derrotaActivada = false;
-
     Mesh mesh;
 
     void Start()
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-
-        MeshRenderer mr = GetComponent<MeshRenderer>();
-        mr.material = new Material(visionConeMaterial);
-        visionConeMaterial = mr.material;
+        GetComponent<MeshRenderer>().material = visionConeMaterial;
 
         visionConeMaterial.color = normalColor;
-
-        if (derrotaPanel != null)
-            derrotaPanel.SetActive(false);
     }
 
     void Update()
     {
-        if (derrotaActivada) return;
-
         playerDetected = false;
 
         DrawVisionCone();
@@ -52,48 +36,12 @@ public class VisionCone : MonoBehaviour
         if (playerDetected)
         {
             visionConeMaterial.color = alertColor;
-
-            detectionTimer += Time.deltaTime;
-
-            if (GameManager.Instance != null)
-                GameManager.Instance.AgregarTiempoDetectado(Time.deltaTime);
-
-            if (DetectionHUD.Instance != null)
-                DetectionHUD.Instance.ReportTimer(this, tiempoDeteccion - detectionTimer);
-
-            if (detectionTimer >= tiempoDeteccion)
-                ActivarDerrota();
+            Debug.Log("Jugador detectado");
         }
         else
         {
             visionConeMaterial.color = normalColor;
-            detectionTimer = 0f;
-
-            if (DetectionHUD.Instance != null)
-                DetectionHUD.Instance.RemoveTimer(this);
         }
-    }
-
-    void ActivarDerrota()
-    {
-        derrotaActivada = true;
-
-        if (DetectionHUD.Instance != null)
-            DetectionHUD.Instance.RemoveTimer(this);
-
-        if (GameManager.Instance != null)
-            GameManager.Instance.FinalizarDerrota();
-
-        if (derrotaPanel != null)
-            derrotaPanel.SetActive(true);
-
-        if (movimientoJugador != null)
-            movimientoJugador.enabled = false;
-
-        if (sonidoDerrota != null)
-            sonidoDerrota.Play();
-
-        Time.timeScale = 0f;
     }
 
     void DrawVisionCone()
@@ -119,23 +67,20 @@ public class VisionCone : MonoBehaviour
 
             float distance = visionRange;
 
-            if (Physics.Raycast(ray, out hit, visionRange, ~0, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(ray, out hit, visionRange))
             {
-                if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Llave"))
-                {
-                    distance = visionRange;
-                }
-                else
-                {
-                    distance = hit.distance;
+                distance = hit.distance;
 
-                    if (hit.collider.CompareTag("Player"))
-                        playerDetected = true;
+                if (hit.collider.CompareTag("Player"))
+                {
+                    playerDetected = true;
                 }
             }
 
             Vector3 point = dir * distance;
             vertices[i + 1] = transform.InverseTransformPoint(transform.position + point);
+
+            Debug.DrawRay(transform.position, dir * distance, Color.red);
 
             currentAngle += angleStep;
         }
