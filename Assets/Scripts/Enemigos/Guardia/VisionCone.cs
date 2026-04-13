@@ -22,7 +22,6 @@ public class VisionCone : MonoBehaviour
 
     public float tiempoDeteccion = 1f;
     float detectionTimer  = 0f;
-    public float DetectionTimer => detectionTimer;
     bool  derrotaActivada = false;
 
     Mesh mesh;

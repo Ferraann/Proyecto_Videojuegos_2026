@@ -14,7 +14,7 @@ public class DetectorCamara : MonoBehaviour
     public GameObject derrotaPanel;
     public MonoBehaviour movimientoJugador;
     public AudioSource sonidoDerrota;
-    public float tiempoDeteccion = 1.0f;
+    public float tiempoDeteccion = 1.0f; // Tiempo de espera antes de perder
 
     [Header("Dimensiones del Cono")]
     public float rangoVision = 10f;
@@ -31,20 +31,12 @@ public class DetectorCamara : MonoBehaviour
     private bool derrotaActivada = false;
     private float timerDeteccion = 0f;
 
-    public bool  PlayerDetected  => jugadorEncontrado;
-    public float DetectionTimer  => timerDeteccion;
-
-    private bool jugadorEncontrado = false;
-
     void Start()
     {
         mesh = new Mesh();
         mesh.name = "Malla_Detector_Camara";
         GetComponent<MeshFilter>().mesh = mesh;
-
-        MeshRenderer mr = GetComponent<MeshRenderer>();
-        mr.material    = new Material(mr.material);
-        materialCono   = mr.material;
+        materialCono = GetComponent<MeshRenderer>().material;
         materialCono.color = colorNormal;
 
         if (derrotaPanel != null)
@@ -55,27 +47,30 @@ public class DetectorCamara : MonoBehaviour
     {
         if (derrotaActivada) return;
 
-        jugadorEncontrado = false;
+        bool jugadorEncontrado = false;
         GenerarConoYDetectar(ref jugadorEncontrado);
 
+        // Lógica de tiempo de espera
         if (jugadorEncontrado)
         {
-            materialCono.color  = colorAlerta;
-            timerDeteccion     += Time.deltaTime;
+            materialCono.color = colorAlerta;
+            timerDeteccion += Time.deltaTime; // Acumula tiempo mientras esté dentro
 
             if (DetectionHUD.Instance != null)
-                DetectionHUD.Instance.ReportTimer(this, tiempoDeteccion - timerDeteccion);
+            DetectionHUD.Instance.ReportTimer(this, tiempoDeteccion - timerDeteccion);
 
             if (timerDeteccion >= tiempoDeteccion)
+            {
                 ActivarDerrota();
+            }
         }
         else
         {
             materialCono.color = colorNormal;
-            timerDeteccion     = 0f;
+            timerDeteccion = 0f; // Reinicia el tiempo si sale del cono
 
             if (DetectionHUD.Instance != null)
-                DetectionHUD.Instance.RemoveTimer(this);
+            DetectionHUD.Instance.RemoveTimer(this);
         }
     }
 
@@ -86,15 +81,15 @@ public class DetectorCamara : MonoBehaviour
 
         for (int y = 0; y <= resolucion; y++)
         {
-            float tY   = (float)y / resolucion;
+            float tY = (float)y / resolucion;
             float angY = Mathf.Lerp(-aperturaVertical / 2, aperturaVertical / 2, tY);
 
             for (int x = 0; x <= resolucion; x++)
             {
-                float tX   = (float)x / resolucion;
+                float tX = (float)x / resolucion;
                 float angX = Mathf.Lerp(-aperturaHorizontal / 2, aperturaHorizontal / 2, tX);
 
-                Vector3 dirLocal  = Quaternion.Euler(angY, angX, 0) * Vector3.forward;
+                Vector3 dirLocal = Quaternion.Euler(angY, angX, 0) * Vector3.forward;
                 Vector3 dirGlobal = transform.TransformDirection(dirLocal);
 
                 float distanciaFinal = rangoVision;
@@ -105,9 +100,10 @@ public class DetectorCamara : MonoBehaviour
                     distanciaFinal = hit.distance;
 
                     if (hit.collider.CompareTag(tagJugador))
+                    {
                         hayContacto = true;
+                    }
                 }
-
                 vertices.Add(dirLocal * distanciaFinal);
             }
         }
@@ -120,18 +116,18 @@ public class DetectorCamara : MonoBehaviour
             for (int x = 0; x < resolucion; x++)
             {
                 int i = y * vFila + x + 1;
-                tri.Add(i);         tri.Add(i + 1);         tri.Add(i + vFila);
-                tri.Add(i + vFila); tri.Add(i + 1);         tri.Add(i + vFila + 1);
+                tri.Add(i); tri.Add(i + 1); tri.Add(i + vFila);
+                tri.Add(i + vFila); tri.Add(i + 1); tri.Add(i + vFila + 1);
 
-                if (y == 0)              { tri.Add(0); tri.Add(i + 1);         tri.Add(i); }
-                if (y == resolucion - 1) { tri.Add(0); tri.Add(i + vFila);     tri.Add(i + vFila + 1); }
-                if (x == 0)              { tri.Add(0); tri.Add(i);             tri.Add(i + vFila); }
+                if (y == 0) { tri.Add(0); tri.Add(i + 1); tri.Add(i); }
+                if (y == resolucion - 1) { tri.Add(0); tri.Add(i + vFila); tri.Add(i + vFila + 1); }
+                if (x == 0) { tri.Add(0); tri.Add(i); tri.Add(i + vFila); }
                 if (x == resolucion - 1) { tri.Add(0); tri.Add(i + vFila + 1); tri.Add(i + 1); }
             }
         }
 
         mesh.Clear();
-        mesh.vertices  = vertices.ToArray();
+        mesh.vertices = vertices.ToArray();
         mesh.triangles = tri.ToArray();
         mesh.RecalculateNormals();
     }
@@ -142,7 +138,6 @@ public class DetectorCamara : MonoBehaviour
 
         if (DetectionHUD.Instance != null)
             DetectionHUD.Instance.RemoveTimer(this);
-
         if (derrotaPanel != null)
             derrotaPanel.SetActive(true);
 
@@ -152,6 +147,6 @@ public class DetectorCamara : MonoBehaviour
         if (sonidoDerrota != null)
             sonidoDerrota.Play();
 
-        Time.timeScale = 0f;
+        Time.timeScale = 0f; // Pausa el juego
     }
 }

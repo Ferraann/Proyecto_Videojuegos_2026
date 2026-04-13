@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro;
 
 namespace Possession
 {
@@ -12,20 +13,17 @@ namespace Possession
         [SerializeField] private PlayerMovimiento    playerMovimiento;
         [SerializeField] private CharacterController playerController;
         [SerializeField] private GameObject          playerModel;
-        [SerializeField] private float               possessionDuration = 5f;
+        [SerializeField] private float possessionDuration = 5f;
+        [SerializeField] private TMP_Text timerText;
 
         private InputHandler       inputHandler;
         private PossessionState    currentState       = PossessionState.Free;
+        public  PossessionState    CurrentState       => currentState;
         private IPossessable       currentTarget;
         private List<IPossessable> nearbyPossessables = new List<IPossessable>();
         private float              scanRefreshTimer;
-        private float              possessionTimer;
-        private bool               isTimerRunning     = false;
-
-        public PossessionState CurrentState       => currentState;
-        public float           PossessionTimer    => possessionTimer;
-        public float           PossessionDuration => possessionDuration;
-        public IPossessable    CurrentTarget      => currentTarget;
+        private float possessionTimer;
+        private bool  isTimerRunning = false;
 
         // -------------------------------------------------- Unity
 
@@ -34,6 +32,7 @@ namespace Possession
             inputHandler = GetComponent<InputHandler>();
             inputHandler.OnPossessionKeyPressed += HandlePossessionInput;
             inputHandler.OnCancelKeyPressed     += CancelScanning;
+            timerText.gameObject.SetActive(false);
         }
 
         private void OnDestroy()
@@ -44,13 +43,17 @@ namespace Possession
 
         private void Update()
         {
+            // TIMER DE POSESIÓN
             if (currentState == PossessionState.Possessing && isTimerRunning)
             {
                 possessionTimer -= Time.deltaTime;
+                
+                timerText.text = possessionTimer.ToString("F1");
 
                 if (possessionTimer <= 0f)
                 {
                     isTimerRunning = false;
+                    Debug.Log("[Possession] Tiempo agotado, expulsando jugador.");
                     Depossess();
                     return;
                 }
@@ -98,8 +101,6 @@ namespace Possession
 
         private void HandlePossessionInput()
         {
-            if (!AbilityManager.Instance.CanUseAbility(this)) return;
-
             switch (currentState)
             {
                 case PossessionState.Free:
@@ -131,8 +132,6 @@ namespace Possession
 
         private void EnterScanning()
         {
-            AbilityManager.Instance.RegisterAbility(this);
-
             nearbyPossessables = FindAllNearby();
             currentTarget      = FindNearestFrom(nearbyPossessables);
             currentState       = PossessionState.Scanning;
@@ -146,26 +145,27 @@ namespace Possession
         private void TryPossess()
         {
             if (currentTarget == null) return;
-        
+
             currentState = PossessionState.Possessing;
             outlineController.HideOutlines();
             playerMovimiento.enabled  = false;
             playerController.enabled  = false;
             playerModel.SetActive(false);
             camara.SetTarget(currentTarget.Transform);
-        
+
             float speed = config.GetSpeedForWeight(currentTarget.WeightClass);
             currentTarget.OnPossess(speed);
-        
+
             possessionTimer = possessionDuration;
-            isTimerRunning  = true;
-        
+            isTimerRunning = true;
+            timerText.gameObject.SetActive(true);
+
             Debug.Log($"[Possession] Poseyendo con velocidad: {speed}");
         }
 
         private void Depossess()
         {
-            AbilityManager.Instance.ClearAbility(this);
+            isTimerRunning = false;
             
             if (currentTarget == null) return;
 
@@ -187,6 +187,7 @@ namespace Possession
 
             currentTarget = null;
             currentState  = PossessionState.Free;
+            timerText.gameObject.SetActive(false);
 
             Debug.Log("[Possession] Jugador liberado.");
         }
