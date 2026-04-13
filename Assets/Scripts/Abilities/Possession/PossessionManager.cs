@@ -98,6 +98,8 @@ namespace Possession
 
         private void HandlePossessionInput()
         {
+            if (!AbilityManager.Instance.CanUseAbility(this)) return;
+
             switch (currentState)
             {
                 case PossessionState.Free:
@@ -129,6 +131,8 @@ namespace Possession
 
         private void EnterScanning()
         {
+            AbilityManager.Instance.RegisterAbility(this);
+
             nearbyPossessables = FindAllNearby();
             currentTarget      = FindNearestFrom(nearbyPossessables);
             currentState       = PossessionState.Scanning;
@@ -161,6 +165,8 @@ namespace Possession
 
         private void Depossess()
         {
+            AbilityManager.Instance.ClearAbility(this);
+            
             if (currentTarget == null) return;
 
             currentTarget.OnDepossess();
