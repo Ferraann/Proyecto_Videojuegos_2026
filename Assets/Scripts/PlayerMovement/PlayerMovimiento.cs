@@ -14,8 +14,6 @@ public class PlayerMovimiento : MonoBehaviour
     [SerializeField] private float Gravedad = -9f;
     private Vector3 velocidadVertical;
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
 
@@ -34,31 +32,38 @@ public class PlayerMovimiento : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
-    if (!enabled) return;
+        if (!enabled) return;
         MoverJugadorEnPlano();
         AplicarGravedad();
     }
 
-    // M�todo para mover al jugador en el plano horizontal basado en la orientaci�n de la c�mara
+    // Método para mover al jugador en el plano horizontal basado en la orientación de la cámara
     private void MoverJugadorEnPlano()
     {
         if (!controlador.enabled) return;
 
         // ---------------------------------------
-        // Movimiento del personje (SOLO FLECHAS)
+        // Movimiento del personje (FLECHAS Y MANDO)
         // ---------------------------------------
 
         float Horizontal = 0f;
         float Vertical = 0f;
 
-        // Leemos exclusivamente las flechas del teclado
+        // 1. Leemos exclusivamente las flechas del teclado
         if (Input.GetKey(KeyCode.RightArrow)) Horizontal += 1f;
         if (Input.GetKey(KeyCode.LeftArrow)) Horizontal -= 1f;
         if (Input.GetKey(KeyCode.UpArrow)) Vertical += 1f;
         if (Input.GetKey(KeyCode.DownArrow)) Vertical -= 1f;
+
+        // 2. Leemos EXCLUSIVAMENTE los nuevos ejes del mando
+        Horizontal += Input.GetAxisRaw("MandoHorizontal");
+        Vertical += Input.GetAxisRaw("MandoVertical");
+
+        // 3. Clampeamos los valores
+        Horizontal = Mathf.Clamp(Horizontal, -1f, 1f);
+        Vertical = Mathf.Clamp(Vertical, -1f, 1f);
 
         // Obtener las direcciones adelante y derecha de la camara para el movimiento
         Vector3 adelanteCamara = camara.forward;
@@ -72,7 +77,7 @@ public class PlayerMovimiento : MonoBehaviour
         adelanteCamara.Normalize();
         derechaCamara.Normalize();
 
-        // Vector de direcci�n basado en las flechas
+        // Vector de dirección basado en los inputs
         Vector3 direccionPlano = (derechaCamara * Horizontal + adelanteCamara * Vertical);
 
         // Normalizamos el vector para que no se mueva mas rapido en diagonal.

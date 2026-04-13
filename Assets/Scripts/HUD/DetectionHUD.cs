@@ -8,7 +8,7 @@ public class DetectionHUD : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI countdownText;
 
-    private Dictionary<VisionCone, float> activeTimers = new Dictionary<VisionCone, float>();
+    private Dictionary<object, float> activeTimers = new Dictionary<object, float>();
 
     private void Awake()
     {
@@ -16,13 +16,13 @@ public class DetectionHUD : MonoBehaviour
         countdownText.gameObject.SetActive(false);
     }
 
-    public void ReportTimer(VisionCone enemy, float timeRemaining)
+    public void ReportTimer(object enemy, float timeRemaining)
     {
         activeTimers[enemy] = timeRemaining;
         UpdateDisplay();
     }
 
-    public void RemoveTimer(VisionCone enemy)
+    public void RemoveTimer(object enemy)
     {
         activeTimers.Remove(enemy);
         UpdateDisplay();
