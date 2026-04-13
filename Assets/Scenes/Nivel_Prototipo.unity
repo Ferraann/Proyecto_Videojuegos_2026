@@ -6233,10 +6233,10 @@ MonoBehaviour:
   jugador: {fileID: 1085320232}
   puntoA: {fileID: 859496298}
   puntoB: {fileID: 34829895}
-  velocidadPatrulla: 4
+  velocidadPatrulla: 2
   tiempoDeEspera: 0.5
-  velocidadGiro: 5
-  velocidadPersecucion: 5
+  velocidadGiro: 2
+  velocidadPersecucion: 2
   tiempoDeteccion: 3
   derrotaPanel: {fileID: 725598569}
   movimientoJugador: {fileID: 1639417671}
