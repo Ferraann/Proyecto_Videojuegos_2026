@@ -6235,7 +6235,7 @@ MonoBehaviour:
   puntoB: {fileID: 34829895}
   velocidadPatrulla: 2
   tiempoDeEspera: 0.5
-  velocidadGiro: 1
+  velocidadGiro: 2
   velocidadPersecucion: 2
   tiempoDeteccion: 3
   derrotaPanel: {fileID: 725598569}
