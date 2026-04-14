@@ -116,7 +116,9 @@ public class VisionCone : MonoBehaviour
 
             float distance = visionRange;
 
-            if (Physics.Raycast(ray, out hit, visionRange))
+            int mask = ~LayerMask.GetMask("Llave");
+
+            if (Physics.Raycast(ray, out hit, visionRange, mask))
             {
                 distance = hit.distance;
 

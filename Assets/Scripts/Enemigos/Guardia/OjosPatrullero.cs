@@ -50,8 +50,9 @@ public class OjosPatrullero : MonoBehaviour
             RaycastHit hit;
             float distance = rangoVision;
 
-            // ARREGLO: He quitado capaObstaculos para que detecte al Player siempre
-            if (Physics.Raycast(ray, out hit, rangoVision))
+            int mask = ~LayerMask.GetMask("Llave");
+
+            if (Physics.Raycast(ray, out hit, rangoVision, mask))
             {
                 distance = hit.distance;
                 if (hit.collider.CompareTag("Player"))
