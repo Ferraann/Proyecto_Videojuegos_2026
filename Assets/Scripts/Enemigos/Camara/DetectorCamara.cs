@@ -138,15 +138,14 @@ public class DetectorCamara : MonoBehaviour
 
         if (DetectionHUD.Instance != null)
             DetectionHUD.Instance.RemoveTimer(this);
-        if (derrotaPanel != null)
-            derrotaPanel.SetActive(true);
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.FinalizarDerrota();
 
         if (movimientoJugador != null)
             movimientoJugador.enabled = false;
 
         if (sonidoDerrota != null)
             sonidoDerrota.Play();
-
-        Time.timeScale = 0f; // Pausa el juego
     }
 }
