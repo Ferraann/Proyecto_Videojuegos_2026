@@ -1649,6 +1649,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3051513}
     - target: {fileID: 1710538285607512070, guid: ca139ec21e0b5274a92e4bb1166f84e3, type: 3}
+      propertyPath: pauseButton
+      value: 
+      objectReference: {fileID: 1544737091}
+    - target: {fileID: 1710538285607512070, guid: ca139ec21e0b5274a92e4bb1166f84e3, type: 3}
       propertyPath: textoLlaves
       value: 
       objectReference: {fileID: 839669590}

@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour
     public GameObject panelDerrota;
     public TMP_Text textoLlavesDerrota;
 
+    [Header("Pause")]
+    public GameObject pauseButton;
+
     private bool nivelTerminado = false;
 
     private void Awake()
@@ -57,6 +60,9 @@ public class GameManager : MonoBehaviour
         if (nivelTerminado) return;
         nivelTerminado = true;
 
+        if (pauseButton != null)
+            pauseButton.SetActive(false);
+
         if (panelVictoria != null)
             panelVictoria.SetActive(true);
 
@@ -70,6 +76,9 @@ public class GameManager : MonoBehaviour
     {
         if (nivelTerminado) return;
         nivelTerminado = true;
+
+        if (pauseButton != null)
+            pauseButton.SetActive(false);
 
         if (panelDerrota != null)
             panelDerrota.SetActive(true);
